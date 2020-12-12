@@ -1,0 +1,23 @@
+name: Create build artifact
+
+inputs:
+  build-command:
+    required: true
+
+outputs:
+  ARTIFACT_NAME: app.tar.gz
+
+runs:
+  using: composite
+  steps:
+    - name: Run build command
+      run: ${{ input.build-command }}
+
+    - name: Create artifact
+      run: tar -cvzf app.tar.gz ./*
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: app
+        path: app.tar.gz
