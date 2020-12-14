@@ -11,9 +11,11 @@ runs:
   using: composite
   steps:
     - name: Run build command
+      shell: bash
       run: ${{ input.build-command }}
 
     - name: Create artifact
+      shell: bash
       run: tar -cvzf app.tar.gz ./*
 
     - name: Upload artifact
