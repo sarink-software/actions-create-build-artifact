@@ -5,7 +5,8 @@ inputs:
     required: true
 
 outputs:
-  ARTIFACT_NAME: app.tar.gz
+  ARTIFACT_NAME:
+    value: app.tar.gz
 
 runs:
   using: composite
