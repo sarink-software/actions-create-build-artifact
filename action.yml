@@ -1,26 +1,5 @@
 name: Create build artifact
 
-inputs:
-  build-command:
-    required: true
-
-outputs:
-  ARTIFACT_NAME:
-    value: app.tar.gz
-
 runs:
-  using: composite
-  steps:
-    - name: Run build command
-      shell: bash
-      run: ${{ input.build-command }}
-
-    - name: Create artifact
-      shell: bash
-      run: tar -cvzf app.tar.gz ./*
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: app
-        path: app.tar.gz
+  using: node12
+  main: dist/index.js
