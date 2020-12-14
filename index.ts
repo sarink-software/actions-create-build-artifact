@@ -4,16 +4,14 @@ import * as artifact from '@actions/artifact';
 import * as childProcess from 'child_process';
 import * as shortuuid from 'short-uuid';
 
-try {
-  (async () => {
+(async () => {
+  try {
     const exec = (command: string, args: string[] = []) => {
       const { spawn } = childProcess;
       return new Promise((resolve, reject) => {
         const proc = spawn(command, args);
         proc.stdout.pipe(process.stdout);
         proc.stderr.pipe(process.stderr);
-        proc.stdout.on('data', (data) => core.info(data.toString().trim()));
-        proc.stderr.on('data', (data) => core.info(data.toString().trim()));
         proc.on('close', (code) => (code === 0 ? resolve(code) : reject(code)));
       });
     };
@@ -22,13 +20,26 @@ try {
     await exec('bash', ['-c', buildCommand]);
 
     const artifactFileName = `${shortuuid.generate()}.tar.gz`;
-    await exec('tar', ['-cvzf', artifactFileName, './*']);
+    await exec('touch', [artifactFileName]);
+
+    const exclude = [
+      ...core
+        .getInput('exclude')
+        .split(' ')
+        .map((file) => `--exclude=${file}`),
+      `--exclude=${artifactFileName}`,
+    ];
+    const keep = core.getInput('keep').split(' ');
+    await exec('tar', ['-cvzf', artifactFileName, ...exclude, ...keep]);
 
     const artifactClient = artifact.create();
-    await artifactClient.uploadArtifact(artifactFileName, [`${artifactFileName}.tar.gz`], '.');
+    await artifactClient.uploadArtifact(artifactFileName, [artifactFileName], '.');
+
+    await exec('rm', ['-f', artifactFileName]);
 
     core.setOutput('ARTIFACT_NAME', artifactFileName);
-  })();
-} catch (error) {
-  core.setFailed(error.message);
-}
+  } catch (error) {
+    core.setFailed(error.message);
+    throw error;
+  }
+})();

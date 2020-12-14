@@ -1,5 +1,15 @@
 name: Create build artifact
 
+inputs:
+  build-command:
+    required: true
+  keep:
+    required: false
+    default: .
+  exclude:
+    required: false
+    default: .git
+
 runs:
   using: node12
   main: dist/index.js
