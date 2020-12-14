@@ -23,7 +23,7 @@ jobs:
         id: test
         uses: ./
         with:
-          build-command: echo test
+          build-command: ls -l && echo build-command
 
       - name: Test artifact can be downloaded
         uses: actions/download-artifact@v1

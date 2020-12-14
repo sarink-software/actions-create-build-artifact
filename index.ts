@@ -24,12 +24,12 @@ import * as shortuuid from 'short-uuid';
 
     const exclude = [
       ...core
-        .getInput('exclude')
+        .getInput('exclude-files')
         .split(' ')
         .map((file) => `--exclude=${file}`),
       `--exclude=${artifactFileName}`,
     ];
-    const keep = core.getInput('keep').split(' ');
+    const keep = core.getInput('keep-files').split(' ');
     await exec('tar', ['-cvzf', artifactFileName, ...exclude, ...keep]);
 
     const artifactClient = artifact.create();

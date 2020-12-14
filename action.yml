@@ -2,11 +2,14 @@ name: Create build artifact
 
 inputs:
   build-command:
-    required: true
-  keep:
+    required: false
+    default: npm run build
+
+  keep-files:
     required: false
     default: .
-  exclude:
+
+  exclude-files:
     required: false
     default: .git
 
