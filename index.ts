@@ -35,7 +35,7 @@ import * as shortuuid from 'short-uuid';
     };
 
     const buildCommand = core.getInput('build-command', { required: true });
-    await exec('bash', ['-c', buildCommand]);
+    await exec('bash', ['-cxe', buildCommand]);
 
     const artifactFileName = `${shortuuid.generate()}.tar.gz`;
     const exclude = [
