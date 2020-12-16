@@ -5,11 +5,11 @@ inputs:
     required: false
     default: npm run build
 
-  keep-files:
+  include:
     required: false
     default: .
 
-  exclude-files:
+  exclude:
     required: false
     default: .git
 

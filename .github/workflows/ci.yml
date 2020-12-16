@@ -14,21 +14,59 @@ jobs:
 
       - name: Install, build, package
         run: |
+          rm -rf dist index.js
           npm install
           npm run build
           npm run package
           rm -rf node_modules index.js
 
-      - name: Test action runs
-        id: test
+      - name: Test action runs (include)
+        id: test-include
         uses: ./
         with:
-          build-command: ls -l && echo build-command
+          include: include.txt
+          build-command: ls -l && echo 'include test' > include.txt && ls -l && cat include.txt
 
-      - name: Test artifact can be downloaded
-        uses: actions/download-artifact@v1
+      - name: Test action runs (exclude)
+        id: test-exclude
+        uses: ./
         with:
-          name: ${{ steps.test.outputs.ARTIFACT_NAME }}
+          exclude: node_modules .git
+          build-command: ls -l && echo 'exclude test' > exclude.txt && ls -l && cat exclude.txt
+
+      - name: Download test-include artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ steps.test-include.outputs.ARTIFACT_NAME }}
+
+      - name: Test include artifact worked
+        run: |
+          set -xe
+          ls -l
+          tar -xvf ${{ steps.test-include.outputs.ARTIFACT_NAME }}
+          ls -l
+          if [ "$(cat include.txt)" != "include test" ]; then
+            exit 1;
+          else
+            echo "Success! File include.txt is present in artifact"
+          fi
+
+      - name: Download test-exclude artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ steps.test-exclude.outputs.ARTIFACT_NAME }}
+
+      - name: Test exclude worked
+        run: |
+          set -xe
+          ls -l
+          tar -xvf ${{ steps.test-exclude.outputs.ARTIFACT_NAME }}
+          ls -l
+          if [ -d node_modules ]; then
+            exit 1;
+          else
+            echo "Success! No node_modules directory present in artifact"
+          fi
 
       - name: Commit newly built/packaged action
         uses: EndBug/add-and-commit@v5
