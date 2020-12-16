@@ -9,6 +9,10 @@ import * as shortuuid from 'short-uuid';
     const exec = (command: string, args: string[] = []) => {
       return new Promise((resolve) => {
         const { spawn } = childProcess;
+
+        const PS1 = 'actions$';
+        core.info(`${PS1} ${command} ${args.join(' ')}`);
+
         const proc = spawn(command, args);
 
         const stdout: string[] = [];
