@@ -34,8 +34,6 @@ import * as shortuuid from 'short-uuid';
     await exec('bash', ['-c', buildCommand]);
 
     const artifactFileName = `${shortuuid.generate()}.tar.gz`;
-    await exec('touch', [artifactFileName]);
-
     const exclude = [
       ...core
         .getInput('exclude-files')
