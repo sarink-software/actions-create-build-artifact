@@ -27,13 +27,6 @@ jobs:
           include: include.txt
           build-command: ls -l && echo 'include test' > include.txt && ls -l && cat include.txt
 
-      - name: Test action runs (exclude)
-        id: test-exclude
-        uses: ./
-        with:
-          exclude: node_modules .git
-          build-command: ls -l && echo 'exclude test' > exclude.txt && ls -l && cat exclude.txt
-
       - name: Download test-include artifact
         uses: actions/download-artifact@v2
         with:
@@ -42,6 +35,7 @@ jobs:
       - name: Test include artifact worked
         run: |
           set -xe
+          rm -f include.txt
           ls -l
           tar -xzvf ${{ steps.test-include.outputs.ARTIFACT_NAME }}
           ls -l
@@ -50,6 +44,13 @@ jobs:
           else
             echo "Success! File include.txt is present in artifact"
           fi
+
+      - name: Test action runs (exclude)
+        id: test-exclude
+        uses: ./
+        with:
+          exclude: node_modules .git
+          build-command: ls -l && echo 'exclude test' > exclude.txt && ls -l && cat exclude.txt
 
       - name: Download test-exclude artifact
         uses: actions/download-artifact@v2
