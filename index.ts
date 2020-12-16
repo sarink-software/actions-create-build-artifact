@@ -26,7 +26,7 @@ const asyncExec = promisify(origExec);
     const exclude = [...core.getInput('exclude').split(' '), artifactFileName].map(
       (file) => `--exclude=${file}`
     );
-    await exec(`tar -cvf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
+    await exec(`tar -czvf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
 
     const artifactClient = artifact.create();
     await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './');

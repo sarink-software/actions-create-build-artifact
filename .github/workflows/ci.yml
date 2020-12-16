@@ -43,7 +43,7 @@ jobs:
         run: |
           set -xe
           ls -l
-          tar -xvf ${{ steps.test-include.outputs.ARTIFACT_NAME }}
+          tar -xzvf ${{ steps.test-include.outputs.ARTIFACT_NAME }}
           ls -l
           if [ "$(cat include.txt)" != "include test" ]; then
             exit 1;
@@ -60,7 +60,7 @@ jobs:
         run: |
           set -xe
           ls -l
-          tar -xvf ${{ steps.test-exclude.outputs.ARTIFACT_NAME }}
+          tar -xzvf ${{ steps.test-exclude.outputs.ARTIFACT_NAME }}
           ls -l
           if [ -d node_modules ]; then
             exit 1;
