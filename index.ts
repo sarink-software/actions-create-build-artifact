@@ -7,12 +7,26 @@ import * as shortuuid from 'short-uuid';
 (async () => {
   try {
     const exec = (command: string, args: string[] = []) => {
-      const { spawn } = childProcess;
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
+        const { spawn } = childProcess;
         const proc = spawn(command, args);
-        proc.stdout.pipe(process.stdout);
-        proc.stderr.pipe(process.stderr);
-        proc.on('close', (code) => (code === 0 ? resolve(code) : reject(code)));
+
+        const stdout: string[] = [];
+        proc.stdout.on('data', (data) => {
+          stdout.push(data);
+          core.info(data);
+        });
+
+        const stderr: string[] = [];
+        proc.stderr.on('data', (data) => {
+          stderr.push(data);
+          throw new Error(stderr.join('\n'));
+        });
+
+        proc.on('close', (code) => {
+          if (code !== 0) throw new Error(stderr.join('\n'));
+          return resolve(stdout.join('\n'));
+        });
       });
     };
 
