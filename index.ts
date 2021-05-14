@@ -29,7 +29,9 @@ const asyncExec = promisify(origExec);
     await exec(`tar -czvf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
 
     const artifactClient = artifact.create();
-    await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './');
+    await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './', {
+      retentionDays: 1,
+    });
 
     await exec(`rm -f ${artifactFileName}`);
 
