@@ -35,34 +35,30 @@ const util_1 = __webpack_require__(1669);
 const child_process_1 = __webpack_require__(3129);
 const asyncExec = util_1.promisify(child_process_1.exec);
 (async () => {
-    try {
-        const exec = async (command) => {
-            const PS1 = 'actions$';
-            core.info(`${PS1} ${command}`);
-            const { stdout, stderr } = await asyncExec(command);
-            core.info(stdout);
-            if (stderr)
-                throw new Error(stderr);
-        };
-        const buildCommand = core.getInput('build-command', { required: true });
-        await exec(buildCommand);
-        const artifactFileName = `${shortuuid.generate()}.tar`;
-        await exec(`touch ${artifactFileName}`);
-        const include = core.getInput('include').split(' ');
-        const exclude = [...core.getInput('exclude').split(' '), artifactFileName].map((file) => `--exclude=${file}`);
-        await exec(`tar -czvf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
-        const artifactClient = artifact.create();
-        await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './', {
-            retentionDays: 1,
-        });
-        await exec(`rm -f ${artifactFileName}`);
-        core.setOutput('ARTIFACT_NAME', artifactFileName);
-    }
-    catch (error) {
-        core.setFailed(error.message);
-        throw error;
-    }
-})();
+    const exec = async (command) => {
+        const PS1 = 'actions$';
+        core.info(`${PS1} ${command}`);
+        const { stdout, stderr } = await asyncExec(command);
+        core.info(stdout);
+        core.info(stderr);
+    };
+    const buildCommand = core.getInput('build-command', { required: true });
+    await exec(buildCommand);
+    const artifactFileName = `${shortuuid.generate()}.tar`;
+    await exec(`touch ${artifactFileName}`);
+    const include = core.getInput('include').split(' ');
+    const exclude = [...core.getInput('exclude').split(' '), artifactFileName].map((file) => `--exclude=${file}`);
+    await exec(`tar -czvf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
+    const artifactClient = artifact.create();
+    await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './', {
+        retentionDays: 1,
+    });
+    await exec(`rm -f ${artifactFileName}`);
+    core.setOutput('ARTIFACT_NAME', artifactFileName);
+})().catch((error) => {
+    core.setFailed(error.message);
+    console.error(error);
+});
 
 
 /***/ }),
