@@ -12,7 +12,7 @@ const asyncExec = promisify(origExec);
     core.info(`${PS1} ${command}`);
     const { stdout, stderr } = await asyncExec(command);
     core.info(stdout);
-    if (stderr) throw new Error(stderr);
+    core.info(stderr);
   };
 
   const buildCommand = core.getInput('build-command', { required: true });
@@ -37,4 +37,5 @@ const asyncExec = promisify(origExec);
   core.setOutput('ARTIFACT_NAME', artifactFileName);
 })().catch((error) => {
   core.setFailed(error.message);
+  console.error(error);
 });
