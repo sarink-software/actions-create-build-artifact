@@ -51,7 +51,7 @@ const asyncExec = util_1.promisify(child_process_1.exec);
     await exec(`tar -czf ${artifactFileName} ${exclude.join(' ')} ${include.join(' ')}`);
     const artifactClient = artifact.create();
     await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './', {
-        retentionDays: 1,
+        retentionDays: 0,
     });
     await exec(`rm -f ${artifactFileName}`);
     core.setOutput('ARTIFACT_NAME', artifactFileName);
