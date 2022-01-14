@@ -29,7 +29,7 @@ const asyncExec = promisify(origExec);
 
   const artifactClient = artifact.create();
   await artifactClient.uploadArtifact(artifactFileName, [`./${artifactFileName}`], './', {
-    retentionDays: 0,
+    retentionDays: 1,
   });
 
   await exec(`rm -f ${artifactFileName}`);
